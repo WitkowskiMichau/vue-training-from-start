@@ -2,20 +2,22 @@
   <div>
     <div
         v-for="city in cities"
-        :key="city"
+        :key="city.name"
         @click="handleClick(city)"
         @mouseenter="onHover(city)"
         @mouseleave="onLeave"
         :class="['city-item', { hovered: city === hoveredCity, selected: city === selectedCity }]"
     >
-      {{ city }}
+      {{ city.name }}
     </div>
     <slot name="selectedCity"></slot>
+    <p v-if="selectedCity">Current Time: {{ localTime }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import moment from 'moment-timezone';
 import { defineProps, defineEmits } from 'vue';
 
 const props = defineProps({
@@ -24,25 +26,37 @@ const props = defineProps({
     required: true
   },
   selectedCity: {
-    type: String,
+    type: Object,
     required: false,
-    default: ''
+    default: () => ({ name: '', timezone: '' })
   }
 });
 
 const emit = defineEmits(['update:selectedCity']);
-const hoveredCity = ref('');
+const hoveredCity = ref(null);
+const localTime = ref('');
 
-const handleClick = (city: string) => {
+const handleClick = (city) => {
   emit('update:selectedCity', city);
 };
 
-const onHover = (city: string) => {
+const onHover = (city) => {
   hoveredCity.value = city;
 };
 
 const onLeave = () => {
-  hoveredCity.value = '';
+  hoveredCity.value = null;
+};
+
+watch(() => props.selectedCity, (newCity) => {
+  if (newCity && newCity.timezone) {
+    updateTime(newCity.timezone);
+  }
+}, { immediate: true });
+
+const updateTime = (timezone) => {
+  localTime.value = moment().tz(timezone).format('YYYY-MM-DD HH:mm:ss');
+  setTimeout(() => updateTime(timezone), 1000); // Update time every second
 };
 </script>
 
