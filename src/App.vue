@@ -4,8 +4,11 @@
         :cities="cityList"
         :selectedCity="selectedCity"
         @update:selectedCity="updateSelectedCity"
-    />
-    <p>Selected City: {{ selectedCity }}</p>
+    >
+      <template #selectedCity>
+        <p>Selected City: {{ selectedCity }}</p>
+      </template>
+    </CitySelect>
   </div>
 </template>
 

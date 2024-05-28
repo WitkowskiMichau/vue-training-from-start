@@ -1,6 +1,5 @@
 <template>
   <div>
-    <label>Select a City:</label>
     <div
         v-for="city in cities"
         :key="city"
@@ -11,6 +10,7 @@
     >
       {{ city }}
     </div>
+    <slot name="selectedCity"></slot>
   </div>
 </template>
 
