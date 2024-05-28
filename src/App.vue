@@ -5,6 +5,9 @@
         v-for="city in cityList"
         :key="city"
         @click="selectCity(city)"
+        @mouseenter="onHover(city)"
+        @mouseleave="onLeave"
+        :class="{'hovered': hoveredCity === city}"
         class="city-item"
     >
       {{ city }}
@@ -27,9 +30,18 @@ const cityList = [
 ];
 
 const selectedCity = ref('');
+const hoveredCity = ref('');
 
 const selectCity = (city: string) => {
   selectedCity.value = city;
+};
+
+const onHover = (city: string) => {
+  hoveredCity.value = city;
+};
+
+const onLeave = () => {
+  hoveredCity.value = '';
 };
 </script>
 
@@ -40,8 +52,11 @@ const selectCity = (city: string) => {
   padding: 10px;
   border: 1px solid #ccc;
   cursor: pointer;
+  background-color: #ffffff; /* Default background color */
+  transition: background-color 0.3s ease; /* Smooth transition */
 }
-.city-item:hover {
-  background-color: #f0f0f0;
+
+.city-item.hovered {
+  background-color: #f0f0f0; /* Background color on hover */
 }
 </style>
