@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import {computed, ref, watch} from 'vue';
 import moment from 'moment-timezone';
 import { defineProps, defineEmits } from 'vue';
 
@@ -34,7 +34,10 @@ const props = defineProps({
 
 const emit = defineEmits(['update:selectedCity']);
 const hoveredCity = ref(null);
-const localTime = ref('');
+const localTime = computed(() => {
+  if (!props.selectedCity.timezone) return '';
+  return moment().tz(props.selectedCity.timezone).format('YYYY-MM-DD HH:mm:ss');
+});
 
 const handleClick = (city) => {
   emit('update:selectedCity', city);
@@ -46,17 +49,6 @@ const onHover = (city) => {
 
 const onLeave = () => {
   hoveredCity.value = null;
-};
-
-watch(() => props.selectedCity, (newCity) => {
-  if (newCity && newCity.timezone) {
-    updateTime(newCity.timezone);
-  }
-}, { immediate: true });
-
-const updateTime = (timezone) => {
-  localTime.value = moment().tz(timezone).format('YYYY-MM-DD HH:mm:ss');
-  setTimeout(() => updateTime(timezone), 1000); // Update time every second
 };
 </script>
 

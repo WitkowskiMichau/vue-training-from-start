@@ -26,7 +26,7 @@ const cityList = ref([
   { name: 'Tel Aviv-Yafo, Israel', timezone: 'Asia/Jerusalem' }
 ]);
 
-const selectedCity = ref({ name: '', timezone: '' });
+const selectedCity = ref(cityList.value[0]);
 
 const updateSelectedCity = (city) => {
   selectedCity.value = city;
