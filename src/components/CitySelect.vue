@@ -11,7 +11,7 @@
       {{ city.name }}
     </div>
     <slot name="selectedCity"></slot>
-    <p v-if="selectedCity">Current Time: {{ localTime }}</p>
+    <p v-if="selectedCity">Current Time: {{ formattedTime }}</p>
     <div v-if="isOpen">Open</div>
     <div v-else>Closed</div>
   </div>
@@ -33,18 +33,34 @@ const props = defineProps({
     default: () => ({ name: '', timezone: '' })
   }
 });
-
 const emit = defineEmits(['update:selectedCity']);
 const hoveredCity = ref(null);
-const localTime = computed(() => {
-  if (!props.selectedCity.timezone) return '';
-  return moment().tz(props.selectedCity.timezone).format('YYYY-MM-DD HH:mm:ss');
+
+setInterval(() => {
+  setLocalTime()
+}, 1000);
+
+const getLocalTime = () => {
+  return moment().tz(props.selectedCity.timezone)
+}
+const setLocalTime = () => {
+  localTime.value = getLocalTime()
+}
+
+const localTime = ref(getLocalTime())
+
+const formattedTime = computed(() => {
+  return localTime.value.format('YYYY-MM-DD HH:mm:ss');
 });
 const isOpen = ref(false);
 
 const handleClick = (city) => {
   emit('update:selectedCity', city);
 };
+
+watch(() => props.selectedCity, () => {
+  setLocalTime()
+}, { immediate: true });
 
 const onHover = (city) => {
   hoveredCity.value = city;
